@@ -1,2 +1,2 @@
 # Fausteroids
-A School Project by Camilo Soto
+A school project by Camilo Soto
