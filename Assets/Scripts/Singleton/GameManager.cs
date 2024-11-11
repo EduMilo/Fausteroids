@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
+    [Header("Requirements")]
     [SerializeField] private GameUI _gameUI;
     [SerializeField] private GameObject _player;
-    [SerializeField] private Transform _mapBound;
+    [SerializeField] private Transform _obstacleTarget;
     private int _score = 0;
     private int _health = 3; //starts at 3 i guess...
     //time?
@@ -34,14 +35,9 @@ public class GameManager : Singleton<GameManager>
         _gameUI.UpdateHealth(_health);
     }
 
-    public float GetMapBoundX()
+    public Transform GetObstacleTarget()
     {
-        return _mapBound.position.x;
-    }
-
-    public float GetMapBoundY()
-    {
-        return _mapBound.position.y;
+        return _obstacleTarget;
     }
 
     private void GameOver()

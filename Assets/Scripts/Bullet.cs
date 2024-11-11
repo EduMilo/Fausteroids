@@ -25,7 +25,11 @@ public class Bullet : MonoBehaviour
             Destroy(gameObject);
         }
 
-
+        //destroy on impact with obstacles.
+        if (collision.gameObject.TryGetComponent<Obstacle>(out Obstacle o))
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void Fire(Vector2 dir)
