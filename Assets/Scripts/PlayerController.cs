@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Accessibility;
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,7 +9,6 @@ public class PlayerController : MonoBehaviour
     [Header("Attributes")]
     [SerializeField] float _thrusterSpeed = 1.0f;
     [SerializeField] float _turnSpeed = 1.0f;
-    [SerializeField] int _hitPoints = 3;
 
     [Header("Weapon")]
     [SerializeField] Transform _blaster;
@@ -22,7 +22,16 @@ public class PlayerController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    private void Update()
+    {
+
+        if (Input.GetButtonDown("Fire1"))
+        {
+            Shoot();
+        }
+    }
+
+    void FixedUpdate()
     {
         if (Input.GetAxis("Vertical") != 0)
         {
@@ -32,12 +41,6 @@ public class PlayerController : MonoBehaviour
         {
             _rb.AddTorque(Input.GetAxis("Horizontal") * _turnSpeed * -1);
         }
-
-        //shooting
-        if (Input.GetButtonDown("Fire1"))
-        {
-            Shoot();
-        }
     }
 
     void Shoot()
@@ -46,13 +49,4 @@ public class PlayerController : MonoBehaviour
         bullet.Fire(_blaster.up);
     }
 
-    public void Hurt(int damage)
-    {
-        _hitPoints -= damage;
-        if (_hitPoints < 0)
-        {
-            Destroy(gameObject);
-        }
-        Debug.Log("YEOUCH!! player got hurt!");
-    }
 }

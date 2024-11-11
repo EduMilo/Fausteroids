@@ -17,15 +17,15 @@ public class Bullet : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.TryGetComponent<PlayerController>(out PlayerController pc))
         {
-            pc.Hurt(_damage);
-
+            GameManager.Instance.LoseHealth(_damage);
+            Destroy(gameObject);
         }
 
-        Destroy(gameObject);
+
     }
 
     public void Fire(Vector2 dir)
