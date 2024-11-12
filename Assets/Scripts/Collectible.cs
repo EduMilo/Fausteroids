@@ -8,7 +8,7 @@ public class Collectible : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.TryGetComponent<PlayerController>(out PlayerController p))
+        if (collision.gameObject.GetComponent<PlayerController>())
         {
             GameManager.Instance.AddScore(_value);
             Destroy(gameObject);

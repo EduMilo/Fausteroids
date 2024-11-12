@@ -5,18 +5,19 @@ using UnityEngine;
 public class Obstacle : MonoBehaviour
 {
     [Header("Properties")]
-    [SerializeField] int _damage;
-    [SerializeField] int _score;
-    [SerializeField] int _minMagnitude;
-    [SerializeField] int _maxMagnitude;
-    [SerializeField] float _duration;
+    [SerializeField] protected int _health;
+    [SerializeField] protected int _damage;
+    [SerializeField] protected int _score;
+    [SerializeField] protected int _minMagnitude;
+    [SerializeField] protected int _maxMagnitude;
+    [SerializeField] protected float _duration;
 
     [Header("Sub-Obstacles")]
-    [SerializeField] Obstacle _subObstacle;
-    [SerializeField] int _subObstacleCount;
+    [SerializeField] protected Obstacle _subObstacle;
+    [SerializeField] protected int _subObstacleCount;
 
     [Header("Collectible")]
-    [SerializeField] Collectible _collectiblePrefab;
+    [SerializeField] protected Collectible _collectiblePrefab;
 
     private Rigidbody2D _rb;
 
@@ -28,7 +29,7 @@ public class Obstacle : MonoBehaviour
     public void Fly()
     {
         //obstacle will fly towards the ObstacleTarget contained by GameManager
-        Vector2 force = GameManager.Instance.GetObstacleTarget().up - transform.position;
+        Vector2 force = GameManager.Instance.GetObstacleTargetTransform().position - transform.position;
         int magnitude = Random.Range(_minMagnitude, _maxMagnitude);
         _rb.AddForce(force * magnitude);
         Destroy(gameObject, _duration);
@@ -43,36 +44,52 @@ public class Obstacle : MonoBehaviour
         Destroy(gameObject, _duration);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         //if collides with player
-        if (collision.gameObject.TryGetComponent<PlayerController>(out PlayerController pc))
+        if (collision.gameObject.GetComponent<PlayerController>())
         {
             GameManager.Instance.LoseHealth(_damage);
-            Destroy(gameObject);
         }
 
         //if hit by a bullet, add score, update spawner, check for subObstacles, check for collectibles, then destroy.
-        if (collision.gameObject.TryGetComponent<Bullet>(out Bullet b))
+        if (collision.gameObject.GetComponent<Bullet>())
         {
-            GameManager.Instance.AddScore(_score);
-            ObstacleSpawner.Instance.ObstacleDestroyed();
-
-            if (_subObstacle != null)
-            {
-                for (int i = 0; i < _subObstacleCount; i++)
-                {
-                    Obstacle newObstacle = Instantiate(_subObstacle, transform.position, transform.rotation);
-                    newObstacle.SubFly();
-                }
-            }
-
-            if(_collectiblePrefab != null)
-            {
-                Instantiate(_collectiblePrefab, transform.position, transform.rotation);
-            }
-
-            Destroy(gameObject);
+            Hit(collision.gameObject.GetComponent<Bullet>().GetDamage());
         }
+    }
+
+    public void Hit(int incomingDamage)
+    {
+        _health -= incomingDamage;
+        if(_health > 0)
+        {
+            return;
+        }
+        
+        GameManager.Instance.AddScore(_score);
+
+        if (_subObstacle != null && incomingDamage != 999)
+        {
+            for (int i = 0; i < _subObstacleCount; i++)
+            {
+                Obstacle newObstacle = Instantiate(_subObstacle, transform.position, transform.rotation);
+                newObstacle.SubFly();
+            }
+        }
+
+        if (_collectiblePrefab != null)
+        {
+            Instantiate(_collectiblePrefab, transform.position, transform.rotation);
+        }
+
+        Destroy(gameObject);
+    }
+
+    //used to destroy the object without caring for health. used for clearing the screen.
+    public void PermaHit()
+    {
+        //TODO: destruction effect
+        Destroy(gameObject);
     }
 }

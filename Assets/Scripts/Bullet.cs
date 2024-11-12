@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
     [Header("Attributes")]
-    [SerializeField] float _duration = 10f;
-    [SerializeField] float _speed = 20.0f;
-    [SerializeField] int _damage = 1;
+    [SerializeField] private float _duration = 10f;
+    [SerializeField] private float _speed = 20.0f;
+    [SerializeField] private int _damage = 1;
 
     private Rigidbody2D _rb;
 
@@ -19,16 +20,24 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.TryGetComponent<PlayerController>(out PlayerController pc))
+        if (collision.gameObject.GetComponent<PlayerController>())
         {
             GameManager.Instance.LoseHealth(_damage);
             Destroy(gameObject);
         }
 
-        //destroy on impact with obstacles.
-        if (collision.gameObject.TryGetComponent<Obstacle>(out Obstacle o))
+        //destroy on impact with obstacles and enemies
+        if (collision.gameObject.GetComponent<Obstacle>())
         {
             Destroy(gameObject);
+        }
+
+        if (collision.gameObject.GetComponent<Enemy>())
+        {
+            if(gameObject.tag != "EnemyBullets")
+            {
+                Destroy(gameObject);
+            }
         }
     }
 
@@ -36,6 +45,11 @@ public class Bullet : MonoBehaviour
     {
         _rb.AddForce(dir * _speed);
         Destroy(gameObject, _duration);
+    }
+
+    public int GetDamage()
+    {
+        return _damage;
     }
 
 }

@@ -8,27 +8,15 @@ public class ObstacleSpawner : Singleton<ObstacleSpawner>
     [Header("Requirements")]
     [SerializeField] private Transform[] _spawners;
     [SerializeField] private Obstacle _obstaclePrefab;
+    [SerializeField] private Obstacle _rareObstaclePrefab;
+    [SerializeField] private int _rareObstacleRarity;
 
-    [Header("Wave Properties")]
-    [SerializeField] private int _waveCount; // the amount of waves in the level.
 
     [Header("Properties")]
-    [SerializeField] private int _startingObstacleAmount;
-    [SerializeField] private int _waveMultiplier;
-    [SerializeField] private int _onScreenLimit;
-    [SerializeField] private int _waveIntervalLength;
+    [SerializeField] private int _timeBetweenWavesLength;
     [SerializeField] private int _timeBetweenSpawnsLength;
 
-
-
-    private int _obstaclesLeft; // how many obstacles left this wave.
-    private int _currWave = 1;
-
-    private void Awake()
-    {
-        //first make sure that we know how many obstacles we have to spawn
-        _obstaclesLeft = _startingObstacleAmount;
-    }
+    private int _obstacleCount = 1; //we start this at one to avoid it modulusing to zero.
 
     private void Start()
     {
@@ -37,53 +25,38 @@ public class ObstacleSpawner : Singleton<ObstacleSpawner>
 
     IEnumerator SpawnObstacles()
     {
-        int obstaclesToSpawn;
-        if(_obstaclesLeft > _onScreenLimit)
+        Transform nextSpawner = _spawners[Random.Range(0, _spawners.Length - 1)];
+            
+        if (_obstaclePrefab != null && (_obstacleCount % _rareObstacleRarity == 0))
         {
-            obstaclesToSpawn = _onScreenLimit;
+            Obstacle newObstacle = Instantiate(_rareObstaclePrefab, nextSpawner.position, nextSpawner.rotation);
+            newObstacle.Fly();
         } else
         {
-            obstaclesToSpawn = _obstaclesLeft;
-        }
-
-
-        for (int i = 0; i < obstaclesToSpawn; i++)
-        {
-            Transform nextSpawner = _spawners[Random.Range(0, _spawners.Length - 1)];
             Obstacle newObstacle = Instantiate(_obstaclePrefab, nextSpawner.position, nextSpawner.rotation);
             newObstacle.Fly();
-            yield return new WaitForSeconds(_timeBetweenSpawnsLength);
         }
-        yield return new WaitForSeconds(_waveIntervalLength / 2); //wait half of the waveinterval before spawning another set of enemies.
-        if(_obstaclesLeft < 0)
+        _obstacleCount++;
+        yield return new WaitForSeconds(_timeBetweenSpawnsLength);
+
+        if (GameManager.Instance.IsBetweenWaves())
         {
-            Debug.Log("Wave " + _currWave + " defeated!");
             StartCoroutine(NextWave());
-            
-        } else
+        }
+        else
         {
             StartCoroutine(SpawnObstacles());
         }
     }
 
+
     IEnumerator NextWave()
     {
-        _currWave++;
-        if(_currWave > _waveCount)
-        {
-            //You win! Win stuff here!
-            Debug.Log("all waves defeated! ya won!");
-        }
-
-        yield return new WaitForSeconds(_waveIntervalLength);
+        yield return new WaitForSeconds(_timeBetweenWavesLength);
+        GameManager.Instance.StartNewWave();
         //otherwise, queue up the amount of upcoming enemies!
-        _startingObstacleAmount *= _waveMultiplier;
-        _obstaclesLeft = _startingObstacleAmount;
+        _obstacleCount = 1;
         StartCoroutine(SpawnObstacles());
     }
 
-    public void ObstacleDestroyed()
-    {
-        _obstaclesLeft--;
-    }
 }
