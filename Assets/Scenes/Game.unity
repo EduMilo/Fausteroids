@@ -1087,7 +1087,7 @@ MonoBehaviour:
   _health: 3
   _respawnLength: 3
   _waveLengths: 1e0000001e0000001e000000
-  _waveScoreRequirements: 0a0000000f00000014000000
+  _waveScoreRequirements: 0a0000001900000028000000
 --- !u!4 &1497037961
 Transform:
   m_ObjectHideFlags: 0
