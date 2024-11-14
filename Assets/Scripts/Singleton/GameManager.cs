@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -8,6 +9,10 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private GameUI _gameUI;
     [SerializeField] private GameObject _player;
     [SerializeField] private GameObject _obstacleTarget;
+    [SerializeField] private GameObject _pauseMenu;
+    [SerializeField] private GameObject _gameOverScreen;
+    [SerializeField] private GameObject _lostInSpaceScreen;
+    [SerializeField] private GameObject _winScreen;
 
     [Header("Properties")]
     [SerializeField] private int _health;
@@ -26,20 +31,35 @@ public class GameManager : Singleton<GameManager>
 
     private void Awake()
     {
-        _gameUI.UpdateScore(_score);
         _gameUI.UpdateHealth(_health);
         _currWave = 0;
         StartNewWave();
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePause();
+        }
+    }
     public void AddScore(int score)
     {
         _score += score;
-        _gameUI.UpdateScore(_score);
+        if (!_betweenWaves)
+        {
+            _gameUI.UpdateScore();
+        }
+
         if(_score >= _waveScoreRequirements[_currWave])
         {
             EndCurrentWave();
         }
+    }
+
+    public int GetScoreLeft()
+    {
+        return _waveScoreRequirements[_currWave] - _score;
     }
 
     public void LoseHealth(int health)
@@ -48,7 +68,6 @@ public class GameManager : Singleton<GameManager>
         _gameUI.UpdateHealth(_health);
         if (_health <= 0)
         {
-            Destroy(_player);
             GameOver();
             return;
         }
@@ -61,7 +80,7 @@ public class GameManager : Singleton<GameManager>
         //destroy all missles and sentrys before respawning
         foreach(Sentry sentry in FindObjectsOfType<Sentry>()) { sentry.PermaHit(); }
         foreach (Missle missle in FindObjectsOfType<Missle>()) { missle.PermaHit(); }
-
+        AudioSource.PlayClipAtPoint(GetComponent<AudioSource>().clip, transform.position);
         _player.SetActive(false);
         yield return new WaitForSeconds(_respawnLength);
         _player.transform.position = Vector2.zero;
@@ -79,13 +98,14 @@ public class GameManager : Singleton<GameManager>
         _currWave++;
         StopCoroutine(_waveCountdown);
         //from here, the ObstacleSpawner will be the one to start the new wave UNLESS the game is won.
-        Debug.Log("You beat wave " + (_currWave - 1));
+        _gameUI.WaveComplete();
 
         _gameUI.UpdateTimer(_waveLengths[_currWave]);
     }
     public void StartNewWave()
     {
         _betweenWaves = false;
+        _gameUI.UpdateScore();
         _waveCountdown = StartCoroutine(WaveCountdown(_waveLengths[_currWave]));
     }
 
@@ -123,15 +143,42 @@ public class GameManager : Singleton<GameManager>
     }
     private void GameOver()
     {
-        Debug.Log("Game Over!!");
-        Destroy(_player);
-        //TODO: send player back to main menu or reload scene!
+        _player.SetActive(false);
+        StartCoroutine(DisplayScreenThenReturnToMenu(_gameOverScreen));
     }
 
     private void Win()
     {
         _isWon = true;
-        Debug.Log("ya won the game!");
+        _player.SetActive(false);
+        StartCoroutine(DisplayScreenThenReturnToMenu(_winScreen));
     }
+
+
+    public void LostInSpace()
+    {
+        _player.SetActive(false);
+        StartCoroutine(DisplayScreenThenReturnToMenu(_lostInSpaceScreen));
+
+    }
+
+    IEnumerator DisplayScreenThenReturnToMenu(GameObject display)
+    {
+        display.SetActive(true);
+        yield return new WaitForSeconds(3.0f);
+        QuitToMenu();
+    }
+
+    public void TogglePause()
+    {
+        _pauseMenu.SetActive(!_pauseMenu.activeInHierarchy);
+    }
+
+    public void QuitToMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
+
 
 }

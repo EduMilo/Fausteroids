@@ -42,8 +42,8 @@ GameObject:
   - component: {fileID: 4173193713275135103}
   - component: {fileID: 4161121632956656332}
   - component: {fileID: 8601090329028800285}
-  - component: {fileID: 3279547649690226944}
   - component: {fileID: 3869621169679483295}
+  - component: {fileID: 6787997941411309087}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -108,7 +108,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
+  m_Sprite: {fileID: 832696801, guid: 802394619e19b224787269d9f6cf89e8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -146,8 +146,24 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &3279547649690226944
-BoxCollider2D:
+--- !u!114 &3869621169679483295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1828256265617674638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86d749009dcf9154a95d6a6306f333a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _thrusterSpeed: 10
+  _turnSpeed: 1
+  _blaster: {fileID: 1206924710443286288}
+  _bulletPrefab: {fileID: 8821621574619146711, guid: 9a90c11d4c428294f86ba75963e1c04b, type: 3}
+--- !u!60 &6787997941411309087
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -178,32 +194,22 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.21133333}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.28866667}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
---- !u!114 &3869621169679483295
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1828256265617674638}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86d749009dcf9154a95d6a6306f333a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _thrusterSpeed: 10
-  _turnSpeed: 1
-  _blaster: {fileID: 1206924710443286288}
-  _bulletPrefab: {fileID: 8821621574619146711, guid: 9a90c11d4c428294f86ba75963e1c04b, type: 3}
+  m_Points:
+    m_Paths:
+    - - {x: -0.046875, y: 0.5}
+      - {x: -0.5, y: -0.40625}
+      - {x: -0.5, y: -0.5}
+      - {x: 0.5, y: -0.5}
+      - {x: 0.5, y: -0.40625}
+      - {x: 0.046875, y: 0.5}
+  m_UseDelaunayMesh: 0

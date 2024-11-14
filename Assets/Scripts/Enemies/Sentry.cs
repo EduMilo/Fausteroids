@@ -65,17 +65,4 @@ public class Sentry : Enemy
         
     }
 
-    
-    public override void Hit(int incomingDamage)
-    {
-        //TODO: cool sentry effects on death;
-        base.Hit(incomingDamage);
-    }
-
-    //used to clear the screen.
-    public override void PermaHit()
-    {
-        //TODO: cool sentry effect here too!
-        base.PermaHit();
-    }
 }

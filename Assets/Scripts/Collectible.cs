@@ -11,6 +11,7 @@ public class Collectible : MonoBehaviour
         if (collision.gameObject.GetComponent<PlayerController>())
         {
             GameManager.Instance.AddScore(_value);
+            AudioSource.PlayClipAtPoint(GetComponent<AudioSource>().clip, transform.position);
             Destroy(gameObject);
         }
     }

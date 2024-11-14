@@ -26,8 +26,10 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public virtual void Hit(int incomingDamage)
+    public void Hit(int incomingDamage)
     {
+
+        AudioSource.PlayClipAtPoint(GetComponent<AudioSource>().clip, transform.position);
         _health -= incomingDamage;
         if (_health <= 0)
         {
@@ -36,7 +38,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public virtual void PermaHit()
+    public void PermaHit()
     {
         Destroy(gameObject);
     }

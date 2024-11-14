@@ -44,6 +44,7 @@ public class Bullet : MonoBehaviour
     public void Fire(Vector2 dir)
     {
         _rb.AddForce(dir * _speed);
+        GetComponent<AudioSource>().Play(); 
         Destroy(gameObject, _duration);
     }
 

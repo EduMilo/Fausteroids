@@ -38,16 +38,4 @@ public class Missle : Enemy
             }
         }
     }
-
-    public override void Hit(int incomingDamage)
-    {
-        base.Hit(incomingDamage);
-        //TODO: cool missle effects on death.
-    }
-
-    public override void PermaHit()
-    {
-        //TODO: cool missle effects here too!
-        base.PermaHit();
-    }
 }

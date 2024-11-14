@@ -61,6 +61,8 @@ public class Obstacle : MonoBehaviour
 
     public void Hit(int incomingDamage)
     {
+        AudioSource.PlayClipAtPoint(GetComponent<AudioSource>().clip, transform.position);
+
         _health -= incomingDamage;
         if(_health > 0)
         {

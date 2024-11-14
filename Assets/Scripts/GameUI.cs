@@ -5,15 +5,10 @@ using UnityEngine;
 
 public class GameUI : MonoBehaviour
 {
-    [SerializeField] private TMP_Text _scoreText;
     [SerializeField] private TMP_Text _healthText;
     [SerializeField] private TMP_Text _timerText;
+    [SerializeField] private TMP_Text _waveText;
 
-
-    public void UpdateScore(int score)
-    {
-        _scoreText.text = $"Score: {score}";
-    }
 
     public void UpdateHealth(int health)
     {
@@ -22,6 +17,18 @@ public class GameUI : MonoBehaviour
 
     public void UpdateTimer(int timeLeft)
     {
-        _timerText.text = $"Time Left: {timeLeft}";
+        _timerText.text = $"{timeLeft}";
     }
+
+    public void UpdateScore()
+    {
+        _waveText.text = $"Wave: {GameManager.Instance.GetWave() + 1}\nScore Needed: {GameManager.Instance.GetScoreLeft()}";
+    }
+
+    public void WaveComplete()
+    {
+        _waveText.text = "Wave Complete!";
+    }
+
+    
 }
